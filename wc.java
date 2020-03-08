@@ -248,19 +248,19 @@ outterLoop:for(int i=0;i<parameter.length;i++) {
 		}
 		return parameter;
 	}
-	public static boolean isContainWildCard(String path) {
-		boolean isContain = false;
-		if(path.length()!=0) {
-			char[] cs = path.toCharArray();
-			for (char c : cs) {
-				if(c=='*'||c=='?') {
-					isContain = true;
-					break;
-				}
-			}
-		}
-		return isContain;
-	}
+//	public static boolean isContainWildCard(String path) {
+//		boolean isContain = false;
+//		if(path.length()!=0) {
+//			char[] cs = path.toCharArray();
+//			for (char c : cs) {
+//				if(c=='*'||c=='?') {
+//					isContain = true;
+//					break;
+//				}
+//			}
+//		}
+//		return isContain;
+//	}
 	public static void main(String[] args) {
 		String path = args[args.length-1];//提取文件路径
 		File file = new File(path);
