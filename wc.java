@@ -1,11 +1,11 @@
-package wc;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
+
+import javax.xml.soap.Node;
 
 public class wc {
 	
@@ -150,36 +150,32 @@ public class wc {
 	}
 	public static boolean Compare(File file1,File file2) {//带有通配符比较两文件路径是否匹配
 		boolean same = true;
+		boolean exitchar = false;
+		int i,m;
 		char[] file1Name = file1.getName().toCharArray();
 		char[] file2Name = file2.getName().toCharArray();
-		for(int i=0;i<file1Name.length&&same;i++) {
-			if(file1Name[i]!=file2Name[i]) {
-				if(file1Name[i]!='?'&&file1Name[i]!='*') {
+		for(i=0,m=0;m<file1Name.length&&same&&i<file2Name.length;i++,m++) {
+			if(file1Name[m]!=file2Name[i]) {
+				if(file1Name[m]!='?'&&file1Name[m]!='*') {
 					same = false;
 				}
-				else if (file1Name[i]=='?') {
-					if(i==file1Name.length-1&&i!=file2Name.length-1) {
+				else if (file1Name[m]=='?') {
+					if(m==file1Name.length-1&&i!=file2Name.length-1) {
 						same = false;
 					}
 					continue;
 				}
-				else if (file1Name[i]=='*') {
-					for(int m =file1Name.length-1,n = file2Name.length-1;m>i;m--,n--) {
-						if(file1Name[m]!=file2Name[n]) {
-							if(file1Name[m]=='?') {
-								continue;
-							}
-							same = false;
+				else if (file1Name[m]=='*') {
+					if(i==file1Name.length-1)break;
+					exitchar = true;
+					for(m = i+1;m<file1Name.length-1&&i<file2Name.length;i++) {
+						if(file2Name[i]==file1Name[m]) {
 							break;
 						}
-					}
-					if(same) {
-						return same;
 					}
 				}
 			}
 		}
-		
 		return same;
 	}
 	public static void SearchFile(File file,String[] parameter) {//递归查找文件
@@ -248,19 +244,6 @@ outterLoop:for(int i=0;i<parameter.length;i++) {
 		}
 		return parameter;
 	}
-//	public static boolean isContainWildCard(String path) {
-//		boolean isContain = false;
-//		if(path.length()!=0) {
-//			char[] cs = path.toCharArray();
-//			for (char c : cs) {
-//				if(c=='*'||c=='?') {
-//					isContain = true;
-//					break;
-//				}
-//			}
-//		}
-//		return isContain;
-//	}
 	public static void main(String[] args) {
 		String path = args[args.length-1];//提取文件路径
 		File file = new File(path);
