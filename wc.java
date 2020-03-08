@@ -5,8 +5,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
 
-import javax.xml.soap.Node;
-
 public class wc {
 	
 	public static int getCharAmount(File file) {//统计字符数
