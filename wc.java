@@ -1,5 +1,3 @@
-package wc;
-
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -12,7 +10,6 @@ import java.util.Date;
 import java.util.LinkedList;
 
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -23,7 +20,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-public class Other {
+public class wc {
 	LinkedList<String> Message = new LinkedList<>();//构造输出总信息
 	public  boolean cheakcode(String line) {//检测一行字符串是否是代码行
 		boolean iscode = false;
@@ -135,32 +132,24 @@ public class Other {
 		}
 		for(int i=0;i<parameter.size();i++) {
 			switch (parameter.get(i)) {
-//			case "-s"://递归处理
-//				parameter.removeFirst();
-//				SearchFile(file,parameter);
-//				break outterLoop;//跳出外部循环，实现递归操作
 			case "-c": //返回文件 file.c 的字符数
 				Output += String.format("字符数：%d  ",CharAmount);
-				//System.out.printf("字符数：%d%n",CharAmount);
 				break;
 			case "-w": //返回文件 file.c 的单词数
 				Output += String.format("单词数：%d  ",word);
-				//System.out.printf("单词数：%d%n",word);
 				break;
 			case "-l": //返回文件 file.c 的行数
 				Output += String.format("行数：%d  ",AllLine);
-				//System.out.printf("行数：%d%n",AllLine);
 				break;
 			case "-a"://返回更复杂的数据（代码行 / 空行 / 注释行）
 				Output += String.format("代码行：%d  空行：%d  注释行：%d%n",codeline,emptyline,notesline);
-				//System.out.printf("代码行：%d%n空行：%d%n注释行：%d%n",codeline,emptyline,notesline);
 				break;
 			default :
 				System.out.println("参数输入有误，无法提供信息");
 			}
 		}
 		Message.add(Output);//添加信息
-		System.out.println(Output);
+		System.out.println(Output);//输出总需求信息
 		return Output;
 	}
 	public  void printMessage(JPanel panel,String sentence,int count) {//给面板添加信息内容
@@ -291,7 +280,7 @@ public class Other {
 			
 			@Override
 			public void actionPerformed(ActionEvent arg0) {
-				JFileChooser jfc = new JFileChooser(new File("C:\\5069\\Java"));
+				JFileChooser jfc = new JFileChooser();
 				jfc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
 				jfc.showDialog(new JLabel(), "选择");
 				if(jfc.getSelectedFile()!=null) {
@@ -385,6 +374,9 @@ public class Other {
 			GUIgetFile();	
 		}else {
 			String path = args[args.length-1];//提取文件路径
+			if(!path.contains("\\")) {//查找当前目录下的文件，重新构建路径
+				path = System.getProperty("user.dir")+"\\"+args[args.length-1];
+			}
 			File file = new File(path);
 			LinkedList<String> parameter = new LinkedList<>();
 			for(int i=0;i<args.length-1;i++) {//构造参数链表
@@ -395,6 +387,6 @@ public class Other {
 	}
 	
 	public static void main(String[] args) {
-		new Other().start(args);
+		new wc().start(args);
 	}
 }
