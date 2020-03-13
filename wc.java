@@ -1,3 +1,5 @@
+package wc;
+
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,6 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Scanner;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -43,7 +46,67 @@ public class wc {
 		}
 		return iscode;
 	}
-	public  boolea
+	public  boolean cheaknotes(String line) {//检测一行字符串是否含有注释
+		boolean isnotes = false;//作为返回判断标识
+		if(line.length()!=0) {//当该行长度不为0是进行操作
+			char[] cs = line.toCharArray();
+			for(int i=0;i<cs.length;i++) {
+				if((i+1<cs.length)&&(cs[i]=='/')&&(cs[i+1]=='/')) {//若出现相邻的的两个/即可判断该行含有注释
+					isnotes = true;
+					break;
+				}
+			}
+		}
+		return isnotes;
+	}
+	public  boolean cheakempty(String line) {//检测一行字符串是否是空行
+		boolean isempty = true;//作为返回值
+		boolean exit = false;//记录是否出现{或者}
+		if(line.length()!=0) {
+			char[] cs = line.toCharArray();
+			for(int i=0;i<cs.length;i++) {	
+				if(cs[i]!=' '&&cs[i]!='{'&&cs[i]!='}') {//若该行出现了空格，控制字符或至多一个{，}以外的字符即可判断不为空行
+					isempty = false;
+					break;
+				}
+				else if((cs[i]=='{'||cs[i]=='}')&&(!exit)){//第一次出现{或}
+					exit = true;
+				}
+				else if((cs[i]=='{'||cs[i]=='}')&&(exit)){//第二次出现{或}，即可判断不符合空行标准
+					isempty = false;
+					break;
+				}
+			}
+		}
+		return isempty;
+	}
+	public  String HanldFile(File file,LinkedList<String> parameter) {//统计更复杂的数据（代码行 / 空行 / 注释行）
+		int AllLine = 0;//统计总代码行数
+		int codeline = 0;//统计代码行
+		int emptyline = 0;//统计空行
+		int notesline = 0;//统计注释行
+		int CharAmount = (int)file.length();//字符数
+		int word = 0;
+		String line;
+		
+		if(parameter.getFirst().equals("-s")||!file.isFile()) {//处理多个文件
+			SearchFile(file, parameter);
+			return null;
+		}
+		
+		String Output = String.format("文件：%s 的相关信息：%n",file.getAbsoluteFile());//构造输入信息
+		try (
+				FileReader fReader = new FileReader(file);
+				BufferedReader bufferedReader = new BufferedReader(fReader);
+			){	
+			while((line=bufferedReader.readLine())!=null) {//检测读取文本是否应当结束
+				int count = 0;//记录每一行的单词数
+				boolean notfound = true;//当前遍历字符不是英文的标识
+				char[] sentence = line.toCharArray();
+				for(int i=0;i<sentence.length;i++) {
+					//当前字符是字母的标识
+					boolean cheakletters = (('a'<=sentence[i]&&sentence[i]<='z')||('A'<=sentence[i]&&sentence[i]<='Z'));
+					if(cheakletters&&notfound) {//读取到单词第一个字母
 						count++;
 						notfound = false;
 					}
@@ -299,6 +362,9 @@ public class wc {
 						newFolder.add(f);
 					}
 				}
+				if(newFolder.size()==0) {
+					System.out.println("不存在文件");
+				}
 				for (File f : newFolder) {//循环调用该函数
 					if(f.isDirectory())//若为文件夹须进行文件名处理
 						SearchFile(new File(f.getAbsolutePath()+"/"+file.getName()),parameter);
@@ -310,9 +376,17 @@ public class wc {
 		}
 	}
 	public void start(String[] args) {
+		
 		if(args.length==1&&args[0].equals("-x")) {//调动图形界面
 			GUIgetFile();	
 		}else {
+			if(args.length==0) {//无参数输入时
+				Scanner in = new Scanner(System.in);
+				System.out.println("请输入你的功能和文件名(参数名在前文件路径名在后，以空格分开)");
+				System.out.print("-c:字符数\n-w:单词数\n-l:行数\n-s:递归\n-a:详细行信息\n>>");
+				String line = in.nextLine();
+				args = line.split(" ");
+			}
 			String path = args[args.length-1];//提取文件路径
 			if(!path.contains("\\")) {//查找当前目录下的文件，重新构建路径
 				path = System.getProperty("user.dir")+"\\"+args[args.length-1];
