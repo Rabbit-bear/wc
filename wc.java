@@ -1,3 +1,5 @@
+package wc;
+
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -8,6 +10,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Date;
 import java.util.LinkedList;
+import java.util.Scanner;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -359,6 +362,9 @@ public class wc {
 						newFolder.add(f);
 					}
 				}
+				if(newFolder.size()==0) {
+					System.out.println("不存在文件");
+				}
 				for (File f : newFolder) {//循环调用该函数
 					if(f.isDirectory())//若为文件夹须进行文件名处理
 						SearchFile(new File(f.getAbsolutePath()+"/"+file.getName()),parameter);
@@ -370,9 +376,17 @@ public class wc {
 		}
 	}
 	public void start(String[] args) {
+		
 		if(args.length==1&&args[0].equals("-x")) {//调动图形界面
 			GUIgetFile();	
 		}else {
+			if(args.length==0) {//无参数输入时
+				Scanner in = new Scanner(System.in);
+				System.out.println("请输入你的功能和文件名(参数名在前文件路径名在后，以空格分开)");
+				System.out.print("-c:字符数\n-w:单词数\n-l:行数\n-s:递归\n-a:详细行信息\n>>");
+				String line = in.nextLine();
+				args = line.split(" ");
+			}
 			String path = args[args.length-1];//提取文件路径
 			if(!path.contains("\\")) {//查找当前目录下的文件，重新构建路径
 				path = System.getProperty("user.dir")+"\\"+args[args.length-1];
